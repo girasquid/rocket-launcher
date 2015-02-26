@@ -6,7 +6,7 @@ pid = nil
 get '/' do
   if params[:new] && pid
     Process.kill("SIGKILL", pid)
-    pid = spawn_process(params[:new])
+    pid = spawn_process(params[:new] == 'ip' ? request.ip : params[:new])
   end
   pid ||= spawn_process
   "PID is #{pid}"
