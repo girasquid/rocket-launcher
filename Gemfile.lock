@@ -1,6 +1,11 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (2.6.0)
+      columnize (~> 0.3)
+      debugger-linecache (~> 1.2)
+    columnize (0.8.9)
+    debugger-linecache (1.2.0)
     em-proxy (0.1.8)
       eventmachine
     eventmachine (1.0.7)
@@ -17,5 +22,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  byebug
   em-proxy
   sinatra
