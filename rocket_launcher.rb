@@ -7,26 +7,33 @@ lastpid = nil
 DEFAULT_UPSTREAM = "127.0.0.1"
 
 get '/' do
-  if params[:new]
-    Process.kill("SIGKILL", pid) if pid
+  launcher = <<-html
+  <form method="post" action="/">
+    <button>Proxify</button>
+  </form>
+  html
+  erb launcher
+end
 
-    # request.ip isn't honouring proxy headers, so do it manually
-    client_ip = @env['HTTP_X_FORWARDED_FOR'] || request.ip
-    upstream_host = params[:new] == 'ip' ? client_ip : params[:new]
+post '/' do
+  Process.kill("SIGKILL", pid) if pid
 
-    pid = spawn_proxy(upstream_host) if is_valid(upstream_host)
-  end
+  # request.ip isn't honouring proxy headers, so do it manually
+  client_ip = @env['HTTP_X_FORWARDED_FOR'] || request.ip
+  upstream_host = client_ip
+
+  pid = spawn_proxy(upstream_host) if is_valid(upstream_host)
 
   pid ||= spawn_proxy
 
   if lastpid == pid
-    resp = "did not launch em-proxy with upstream host '#{upstream_host}'; still PID #{pid}"
+    resp = "<h2>No changes to proxy</h2><p>Techy stuff: did not launch em-proxy with upstream host '#{upstream_host}'; still PID #{pid}</p>"
   else
-    resp = "em-proxy launched as PID #{pid}, using #{upstream_host || DEFAULT_UPSTREAM} as upstream proxy"
+    resp = "<h2>Proxy configured!</h2><p>Techy stuff: em-proxy launched as PID #{pid}, using #{upstream_host || DEFAULT_UPSTREAM} as upstream proxy</p>"
   end
 
   lastpid = pid
-  resp
+  erb resp
 end
 
 def spawn_proxy(upstream_host=DEFAULT_UPSTREAM)
