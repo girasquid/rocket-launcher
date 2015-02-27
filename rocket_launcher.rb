@@ -4,8 +4,8 @@ require "sinatra"
 pid = nil
 
 get '/' do
-  if params[:new] && pid
-    Process.kill("SIGKILL", pid)
+  if params[:new]
+    Process.kill("SIGKILL", pid) if pid
 
     # request.ip isn't honouring proxy headers, so do it manually
     client_ip = @env['HTTP_X_FORWARDED_FOR'] || request.ip
